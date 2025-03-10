@@ -9,7 +9,7 @@ import UIKit
 import SceneKit
 import ARKit
 
-class GameUIViewController: UIViewController, SCNSceneRendererDelegate{
+class GameUIViewController: UIViewController, ARSessionDelegate, SCNSceneRendererDelegate{
     var delegate: GameUIViewControllerDelegate! = nil
     let scene = SCNScene()
     let sceneView = SCNView()
@@ -22,8 +22,9 @@ class GameUIViewController: UIViewController, SCNSceneRendererDelegate{
         let blockNode = SCNNode(geometry: SCNBox(width: thickness, height: thickness, length: thickness * 3, chamferRadius: 0.002))
         blockNode.geometry?.materials.first?.diffuse.contents = color
         blockNode.eulerAngles = SCNVector3(x: 0, y: layer % 2 == 0 ? 0 : Float.pi / 2, z: 0)
-        blockNode.position = SCNVector3(x: Float(x), y: Float(Double(layer) * thickness), z: Float(z))
-        blockNode.name = "block\(layer)\(numInLayer)"
+        blockNode.position = SCNVector3(x: Float(x), y: Float((Double(layer) * thickness) + (thickness/1)), z: Float(z))
+        blockNode.name = "block\(layer)l\(numInLayer)"
+        blockNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: SCNPhysicsShape(node: blockNode))
         scene.rootNode.addChildNode(blockNode)
     }
     
@@ -34,6 +35,18 @@ class GameUIViewController: UIViewController, SCNSceneRendererDelegate{
                 generateBlock(layer: i, numInLayer: s)
             }
         }
+    }
+    
+    func setupScene() {
+        placeBlocks()
+        let groundNode = SCNNode(geometry: SCNPlane(width: 1.0, height: 1.0))
+        groundNode.eulerAngles = SCNVector3(x: -Float.pi/2, y: 0, z: 0)
+        groundNode.geometry?.materials.first?.diffuse.contents = UIColor.blue
+        groundNode.physicsBody = SCNPhysicsBody(type: .kinematic, shape: SCNPhysicsShape(node: groundNode))
+        groundNode.position = SCNVector3(0, 0, 0)
+        scene.rootNode.addChildNode(groundNode)
+        
+        scene.physicsWorld.gravity = SCNVector3(x: 0, y: 1.0, z: 0)
     }
     
     
