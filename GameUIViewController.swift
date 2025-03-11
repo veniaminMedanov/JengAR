@@ -18,7 +18,7 @@ class GameUIViewController: UIViewController, ARSessionDelegate, SCNSceneRendere
     func generateBlock(layer: Int, numInLayer: Int,
                        color: UIColor = UIColor.green){
         let x = layer % 2 != 0 ? 0 : Double(numInLayer) * thickness - (thickness * 2)
-        let z = layer % 2 == 0 ? 0 : Double(numInLayer) * thickness - (thickness * 2))
+        let z = layer % 2 == 0 ? 0 : Double(numInLayer) * thickness - (thickness * 2)
         let blockNode = SCNNode(geometry: SCNBox(width: thickness, height: thickness, length: thickness * 3, chamferRadius: 0.002))
         blockNode.geometry?.materials.first?.diffuse.contents = color
         blockNode.eulerAngles = SCNVector3(x: 0, y: layer % 2 == 0 ? 0 : Float.pi / 2, z: 0)
